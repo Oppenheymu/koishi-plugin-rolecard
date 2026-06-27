@@ -6,7 +6,7 @@
 
 | 包名 | 路径 | 简介 |
 |------|------|------|
-| [koishi-plugin-belikov](./packages/belikov) | `packages/belikov` | TBD |
+| [koishi-plugin-belikov](./packages/belikov) | `packages/belikov` | 别里科夫 · 套中人身份卡，按关键词/概率抛出谨小慎微的台词 |
 | [koishi-plugin-chiangkaishek](./packages/chiangkaishek) | `packages/chiangkaishek` | TBD |
 
 ## 交流与反馈
