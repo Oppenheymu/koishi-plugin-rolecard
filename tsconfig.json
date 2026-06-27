@@ -1,4 +1,7 @@
+
 {
-    "files": [],
-    "references": [{ "path": "./packages/belikov" }, { "path": "./packages/chiangkaishek" }]
+	"files": [],
+	"references": [
+		{ "path": "./packages/belikov" }
+	]
 }

@@ -1,4 +1,3 @@
-
 {
   "name": "koishi-plugin-belikov",
   "version": "1.0.0",
@@ -15,10 +14,10 @@
     },
     "./package.json": "./package.json"
   },
-    "files": [
-        "lib",
-        "assets"
-    ],
+  "files": [
+    "lib",
+    "assets"
+  ],
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -48,9 +47,6 @@
     "service": {
       "required": [
         "database"
-      ],
-      "implements": [
-        "amIAlt"
       ]
     }
   }
