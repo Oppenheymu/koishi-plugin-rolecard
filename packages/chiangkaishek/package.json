@@ -1,0 +1,49 @@
+{
+    "name": "koishi-plugin-chiangkaishek",
+    "version": "0.1.0",
+    "contributors": [
+        "xiaoxiaochen"
+    ],
+    "main": "lib/index.js",
+    "types": "lib/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./lib/index.d.ts",
+            "development": "./src/index.ts",
+            "default": "./lib/index.js"
+        },
+        "./package.json": "./package.json"
+    },
+    "files": [
+        "lib"
+    ],
+    "license": "MIT",
+    "publishConfig": {
+        "access": "public"
+    },
+    "homepage": "https://github.com/xiaoxiaochen/koishi-plugin-rolecard/tree/main/packages/chiangkaishek",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/xiaoxiaochen/koishi-plugin-rolecard.git",
+        "directory": "packages/chiangkaishek"
+    },
+    "keywords": [
+        "chatbot",
+        "koishi",
+        "plugin",
+        "rolecard"
+    ],
+    "scripts": {
+        "build": "tsc -b"
+    },
+    "peerDependencies": {
+        "koishi": "^4.17.4"
+    },
+    "koishi": {
+        "description": {
+            "en": "Chiang Kai-shek rolecard plugin",
+            "zh": "Chiang Kai-shek 身份卡插件"
+        },
+        "service": {}
+    }
+}

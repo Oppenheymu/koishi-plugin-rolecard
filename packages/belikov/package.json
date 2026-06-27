@@ -1,0 +1,49 @@
+{
+    "name": "koishi-plugin-belikov",
+    "version": "0.1.0",
+    "contributors": [
+        "xiaoxiaochen"
+    ],
+    "main": "lib/index.js",
+    "types": "lib/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./lib/index.d.ts",
+            "development": "./src/index.ts",
+            "default": "./lib/index.js"
+        },
+        "./package.json": "./package.json"
+    },
+    "files": [
+        "lib"
+    ],
+    "license": "MIT",
+    "publishConfig": {
+        "access": "public"
+    },
+    "homepage": "https://github.com/xiaoxiaochen/koishi-plugin-rolecard/tree/main/packages/belikov",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/xiaoxiaochen/koishi-plugin-rolecard.git",
+        "directory": "packages/belikov"
+    },
+    "keywords": [
+        "chatbot",
+        "koishi",
+        "plugin",
+        "rolecard"
+    ],
+    "scripts": {
+        "build": "tsc -b"
+    },
+    "peerDependencies": {
+        "koishi": "^4.17.4"
+    },
+    "koishi": {
+        "description": {
+            "en": "Belikov rolecard plugin",
+            "zh": "Belikov 身份卡插件"
+        },
+        "service": {}
+    }
+}
