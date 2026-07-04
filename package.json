@@ -1,18 +1,49 @@
 {
-    "name": "@rolecard/monorepo",
-    "private": true,
-    "packageManager": "pnpm@10.33.0",
-    "scripts": {
-        "build": "pnpm -r --if-present build",
-        "dev": "pnpm -r --parallel --if-present dev",
-        "test": "pnpm -r --if-present test",
-        "changeset": "changeset",
-        "version-packages": "changeset version",
-        "release": "changeset publish"
+  "name": "koishi-plugin-rolecard",
+  "version": "1.0.0",
+  "contributors": [
+    "Oppenheymu <oppenheymu@gmail.com>"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "development": "./src/index.ts",
+      "default": "./lib/index.js"
     },
-    "devDependencies": {
-        "@changesets/cli": "^2.29.4",
-        "tsup": "^8.5.0",
-        "typescript": "^5.8.3"
-    }
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "rolecards"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://github.com/Oppenheymu/koishi-plugin-rolecard",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Oppenheymu/koishi-plugin-rolecard.git"
+  },
+  "keywords": [
+    "chatbot",
+    "koishi",
+    "plugin",
+    "rolecard"
+  ],
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "peerDependencies": {
+    "koishi": "^4.17.4"
+  },
+  "koishi": {
+    "description": {
+      "en": "Rolecard plugin — data-driven character quote engine",
+      "zh": "身份卡插件 · 数据驱动的角色台词引擎，可选加载不同角色卡"
+    },
+    "service": {}
+  }
 }
