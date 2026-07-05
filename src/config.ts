@@ -23,58 +23,45 @@ const belikovTagOptions: { tag: string; name: string }[] = [
     { tag: 'distancing', name: '撇清关系与甩锅' },
 ];
 
-/** 别里科夫专属配置组 Schema。概率配置通过 intersect 条件联动控制显隐。 */
+/** 别里科夫专属配置组 Schema。 */
 const BelikovConfig = Schema.object({
-    belikovConfig: Schema.intersect([
-        Schema.object({
-            cooldown: Schema.number()
-                .default(60)
-                .min(0)
-                .description('别里科夫冷却时间（秒），该群聊内两次触发的最小间隔'),
-            tags: Schema.array(
-                Schema.object({
-                    tag: Schema.string().required().description('标签名'),
-                    name: Schema.string().required().description('标签别称'),
-                    enabled: Schema.boolean()
-                        .default(true)
-                        .description('是否启用该标签触发'),
-                }),
-            )
-                .role('table')
-                .default(belikovTagOptions.map((t) => ({ ...t, enabled: true })))
-                .description('启用的触发标签：逐项控制每个标签是否在该群聊生效'),
-            enableRandom: Schema.boolean()
-                .default(false)
-                .description('启用全部消息概率随机触发（神预言效果）'),
-            enableImage: Schema.boolean()
-                .default(false)
-                .description('启用角色卡插图'),
-        }),
-        Schema.union([
+    belikovConfig: Schema.object({
+        cooldown: Schema.number()
+            .default(60)
+            .min(0)
+            .description('别里科夫冷却时间（秒），该群聊内两次触发的最小间隔'),
+        tags: Schema.array(
             Schema.object({
-                enableRandom: Schema.const(true).required(),
-                randomProbability: Schema.number()
-                    .default(0.03)
-                    .min(0)
-                    .max(1)
-                    .step(0.01)
-                    .description('随机触发概率（0-1，如 0.03 表示 3%）'),
+                tag: Schema.string().required().description('标签名'),
+                name: Schema.string().required().description('标签别称'),
+                enabled: Schema.boolean()
+                    .default(true)
+                    .description('是否启用该标签触发'),
             }),
-            Schema.object({}),
-        ]),
-        Schema.union([
-            Schema.object({
-                enableImage: Schema.const(true).required(),
-                imageProbability: Schema.number()
-                    .default(1)
-                    .min(0)
-                    .max(1)
-                    .step(0.01)
-                    .description('附带图片的概率（0-1，如 1 表示每次触发都发图）'),
-            }),
-            Schema.object({}),
-        ]),
-    ]),
+        )
+            .role('table')
+            .default(belikovTagOptions.map((t) => ({ ...t, enabled: true })))
+            .description('启用的触发标签：逐项控制每个标签是否在该群聊生效'),
+        enableRandom: Schema.boolean()
+            .default(false)
+            .description('启用全部消息概率随机触发（神预言效果）'),
+        randomProbability: Schema.number()
+            .default(0.03)
+            .min(0)
+            .max(1)
+            .step(0.01)
+            .description('随机触发概率（0-1，如 0.03 表示 3%）'),
+        enableImage: Schema.boolean()
+            .default(false)
+            .description('启用角色卡插图'),
+        imageProbability: Schema.number()
+            .default(1)
+            .min(0)
+            .max(1)
+            .step(0.01)
+            .description('附带图片的概率（0-1，如 1 表示每次触发都发图）'),
+    // biome-ignore lint/suspicious/noExplicitAny: 空对象 default 由 resolver 填充各字段默认值
+    }).description('别里科夫专属配置').default({} as any),
 });
 
 // ──────────────────────────────────────────────────────────────
@@ -98,7 +85,7 @@ const ChannelItem = Schema.intersect([
             .default('')
             .description('启用的机器人 selfId（留空表示不限定）'),
         belikov: Schema.boolean()
-            .default(true)
+            .default(false)
             .description('启用别里科夫 · 套中人'),
     }),
     Schema.union([
