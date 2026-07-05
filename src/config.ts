@@ -74,7 +74,7 @@ const BelikovConfig = Schema.object({
             }),
             Schema.object({}),
         ]),
-    ]).description('别里科夫专属配置'),
+    ]),
 });
 
 // ──────────────────────────────────────────────────────────────
