@@ -115,10 +115,10 @@ export interface ChannelConfig {
     channelId: string;
     /** 启用的机器人 selfId，留空表示不限定。 */
     botId: string;
-    /** 启用的角色卡 ID 列表，如 ['belikov']。 */
-    rolecards: string[];
-    /** 别里科夫专属配置（仅当 rolecards 含 'belikov' 时有效）。 */
-    belikov?: BelikovChannelConfig;
+    /** 是否启用别里科夫角色卡。 */
+    belikov: boolean;
+    /** 别里科夫专属配置（仅当 belikov 为 true 时有效）。 */
+    belikovConfig?: BelikovChannelConfig;
 }
 
 /** 插件运行时配置。所有行为参数统一由此处控制，与角色卡内容解耦。 */

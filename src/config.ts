@@ -25,7 +25,7 @@ const belikovTagOptions: { tag: string; name: string }[] = [
 
 /** 别里科夫专属配置组 Schema。概率配置通过 intersect 条件联动控制显隐。 */
 const BelikovConfig = Schema.object({
-    belikov: Schema.intersect([
+    belikovConfig: Schema.intersect([
         Schema.object({
             cooldown: Schema.number()
                 .default(60)
@@ -81,17 +81,13 @@ const BelikovConfig = Schema.object({
 // 群聊配置项
 // ──────────────────────────────────────────────────────────────
 
-/** 可选角色卡列表（后续扩展新角色卡时在此追加）。 */
-const rolecardChoices = [
-    Schema.const('belikov').description('别里科夫 · 套中人'),
-    // Schema.const('newcharacter').description('新角色 · ...'),
-];
+/** 可选角色卡列表（后续扩展新角色卡时在此追加 boolean 开关）。 */
 
 /**
  * 单个群聊配置项。
  *
  * 使用 Schema.intersect 实现条件联动：
- * 基础字段始终显示；当 rolecards 含 'belikov' 时，别里科夫专属配置组才显示。
+ * 基础字段始终显示；当 belikov 开关打开时，别里科夫专属配置组才显示。
  */
 const ChannelItem = Schema.intersect([
     Schema.object({
@@ -101,14 +97,13 @@ const ChannelItem = Schema.intersect([
         botId: Schema.string()
             .default('')
             .description('启用的机器人 selfId（留空表示不限定）'),
-        rolecards: Schema.array(Schema.union(rolecardChoices))
-            .role('checkbox')
-            .default(['belikov'])
-            .description('启用的角色卡（可多选）'),
+        belikov: Schema.boolean()
+            .default(true)
+            .description('启用别里科夫 · 套中人'),
     }),
     Schema.union([
         Schema.object({
-            rolecards: Schema.array(Schema.const('belikov')).required(),
+            belikov: Schema.const(true).required(),
             ...BelikovConfig.dict,
         }),
         Schema.object({}),

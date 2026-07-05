@@ -167,6 +167,6 @@ export class RolecardEngine {
         if (this.rolecard.manifest.id !== 'belikov') return null;
         // 由 index.ts 注入的 ChannelConfig 通过闭包传递
         // 这里简化处理：belikov 配置直接挂在 config 上（见 index.ts 的引擎实例化逻辑）
-        return (this.config as Config & { __channelBelikov?: NonNullable<Config['channels'][number]['belikov']> }).__channelBelikov ?? null;
+        return (this.config as Config & { __channelBelikov?: NonNullable<Config['channels'][number]['belikovConfig']> }).__channelBelikov ?? null;
     }
 }

@@ -71,26 +71,27 @@ export function apply(ctx: Context, config: ConfigType) {
     for (const ch of config.channels) {
         if (!ch.channelId) continue;
 
-        for (const cardId of ch.rolecards) {
-            const rolecard = rolecardMap.get(cardId);
+        // 别里科夫角色卡
+        if (ch.belikov) {
+            const rolecard = rolecardMap.get('belikov');
             if (!rolecard) {
-                logger.warn(`群聊 ${ch.channelId}：未找到角色卡 "${cardId}"，跳过`);
-                continue;
+                logger.warn(`群聊 ${ch.channelId}：未找到角色卡 "belikov"，跳过`);
+            } else {
+                // 将群聊级专属配置注入到引擎可访问的位置
+                const engineConfig = {
+                    ...config,
+                    __channelBelikov: ch.belikovConfig,
+                } as ConfigType & {
+                    __channelBelikov?: NonNullable<ChannelConfig['belikovConfig']>;
+                };
+
+                // 用子作用域隔离各引擎，仅接收白名单内群聊的消息
+                let subCtx = ctx.channel(ch.channelId);
+                if (ch.botId) subCtx = subCtx.self(ch.botId);
+                new RolecardEngine(subCtx, rolecard, engineConfig);
             }
-
-            // 将群聊级专属配置注入到引擎可访问的位置
-            // 别里科夫专属配置通过 __channelBelikov 传递
-            const engineConfig = {
-                ...config,
-                __channelBelikov: ch.belikov,
-            } as ConfigType & {
-                __channelBelikov?: NonNullable<ChannelConfig['belikov']>;
-            };
-
-            // 用子作用域隔离各引擎，仅接收白名单内群聊的消息
-            let subCtx = ctx.channel(ch.channelId);
-            if (ch.botId) subCtx = subCtx.self(ch.botId);
-            new RolecardEngine(subCtx, rolecard, engineConfig);
         }
+
+        // 后续扩展新角色卡时，在此添加 else if 分支
     }
 }
