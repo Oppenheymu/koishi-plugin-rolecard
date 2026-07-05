@@ -23,27 +23,58 @@ const belikovTagOptions: { tag: string; name: string }[] = [
     { tag: 'distancing', name: '撇清关系与甩锅' },
 ];
 
-/** 别里科夫专属配置组 Schema。 */
+/** 别里科夫专属配置组 Schema。概率配置通过 intersect 条件联动控制显隐。 */
 const BelikovConfig = Schema.object({
-    belikov: Schema.object({
-        cooldown: Schema.number()
-            .default(60)
-            .min(0)
-            .description('别里科夫冷却时间（秒），该群聊内两次触发的最小间隔'),
-        tags: Schema.array(
+    belikov: Schema.intersect([
+        Schema.object({
+            cooldown: Schema.number()
+                .default(60)
+                .min(0)
+                .description('别里科夫冷却时间（秒），该群聊内两次触发的最小间隔'),
+            tags: Schema.array(
+                Schema.object({
+                    tag: Schema.string().required().description('标签名'),
+                    name: Schema.string().required().description('标签别称'),
+                    enabled: Schema.boolean()
+                        .default(true)
+                        .description('是否启用该标签触发'),
+                }),
+            )
+                .role('table')
+                .default(belikovTagOptions.map((t) => ({ ...t, enabled: true })))
+                .description('启用的触发标签：逐项控制每个标签是否在该群聊生效'),
+            enableRandom: Schema.boolean()
+                .default(false)
+                .description('启用全部消息概率随机触发（神预言效果）'),
+            enableImage: Schema.boolean()
+                .default(false)
+                .description('启用角色卡插图'),
+        }),
+        Schema.union([
             Schema.object({
-                tag: Schema.string().required().description('标签名'),
-                name: Schema.string().required().description('标签别称'),
-                enabled: Schema.boolean()
-                    .default(true)
-                    .description('是否启用该标签触发'),
+                enableRandom: Schema.const(true).required(),
+                randomProbability: Schema.number()
+                    .default(0.03)
+                    .min(0)
+                    .max(1)
+                    .step(0.01)
+                    .description('随机触发概率（0-1，如 0.03 表示 3%）'),
             }),
-        )
-            .role('table')
-            .default(belikovTagOptions.map((t) => ({ ...t, enabled: true })))
-            .description('启用的触发标签：逐项控制每个标签是否在该群聊生效'),
-    })
-        .description('别里科夫专属配置'),
+            Schema.object({}),
+        ]),
+        Schema.union([
+            Schema.object({
+                enableImage: Schema.const(true).required(),
+                imageProbability: Schema.number()
+                    .default(1)
+                    .min(0)
+                    .max(1)
+                    .step(0.01)
+                    .description('附带图片的概率（0-1，如 1 表示每次触发都发图）'),
+            }),
+            Schema.object({}),
+        ]),
+    ]).description('别里科夫专属配置'),
 });
 
 // ──────────────────────────────────────────────────────────────
@@ -77,7 +108,7 @@ const ChannelItem = Schema.intersect([
     }),
     Schema.union([
         Schema.object({
-            rolecards: Schema.array(Schema.string()).required(),
+            rolecards: Schema.array(Schema.const('belikov')).required(),
             ...BelikovConfig.dict,
         }),
         Schema.object({}),
@@ -100,50 +131,7 @@ export const Config = Schema.intersect([
     // ── 多群聊配置 ──
     Schema.object({
         channels: Schema.array(ChannelItem)
-            .role('table')
             .default([])
             .description('各群聊/频道的独立配置。未列出的群聊将使用全局默认行为'),
     }),
-
-    // ── 全局触发概率配置（条件联动） ──
-    Schema.intersect([
-        Schema.object({
-            enableRandom: Schema.boolean()
-                .default(false)
-                .description('启用全部消息概率随机触发（神预言效果）'),
-        }),
-        Schema.union([
-            Schema.object({
-                enableRandom: Schema.const(true).required(),
-                randomProbability: Schema.number()
-                    .default(0.03)
-                    .min(0)
-                    .max(1)
-                    .step(0.01)
-                    .description('随机触发概率（0-1，如 0.03 表示 3%）'),
-            }),
-            Schema.object({}),
-        ]),
-    ]),
-
-    // ── 插图配置（条件联动） ──
-    Schema.intersect([
-        Schema.object({
-            enableImage: Schema.boolean()
-                .default(false)
-                .description('启用角色卡插图'),
-        }),
-        Schema.union([
-            Schema.object({
-                enableImage: Schema.const(true).required(),
-                imageProbability: Schema.number()
-                    .default(1)
-                    .min(0)
-                    .max(1)
-                    .step(0.01)
-                    .description('附带图片的概率（0-1，如 1 表示每次触发都发图）'),
-            }),
-            Schema.object({}),
-        ]),
-    ]),
 ]);

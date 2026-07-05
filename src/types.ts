@@ -99,6 +99,14 @@ export interface BelikovChannelConfig {
     cooldown: number;
     /** 触发标签启用表，逐项控制每个标签是否在该群聊生效。 */
     tags: BelikovTagConfig[];
+    /** 是否启用全部消息概率随机触发。 */
+    enableRandom: boolean;
+    /** 随机触发概率（0-1）。仅在 enableRandom 为真时生效。 */
+    randomProbability: number;
+    /** 是否启用角色卡插图。 */
+    enableImage: boolean;
+    /** 附带图片的概率（0-1）。仅在 enableImage 为真时生效。 */
+    imageProbability: number;
 }
 
 /** 单个群聊/频道的配置项。 */
@@ -122,14 +130,4 @@ export interface Config {
     // ── 多群聊配置 ──
     /** 各群聊/频道的独立配置列表。 */
     channels: ChannelConfig[];
-
-    // ── 全局触发概率配置 ──
-    /** 是否启用全部消息概率随机触发。 */
-    enableRandom: boolean;
-    /** 随机触发概率（0-1）。仅在 enableRandom 为真时生效。 */
-    randomProbability: number;
-    /** 是否启用角色卡插图。 */
-    enableImage: boolean;
-    /** 附带图片的概率（0-1）。仅在 enableImage 为真时生效。 */
-    imageProbability: number;
 }

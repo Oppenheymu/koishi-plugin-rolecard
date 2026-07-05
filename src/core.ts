@@ -105,11 +105,12 @@ export class RolecardEngine {
 
         // 2. 未命中关键词时按概率随机触发
         let quote: Quote | null = null;
+        const belikovCfg = this.getBelikovConfig();
         if (matchedTag) {
             quote = pick(this.quotesByTag.get(matchedTag) ?? this.allQuotes);
         } else if (
-            this.config.enableRandom &&
-            Math.random() < this.config.randomProbability
+            belikovCfg?.enableRandom &&
+            Math.random() < belikovCfg.randomProbability
         ) {
             quote = pick(this.allQuotes);
         }
@@ -122,9 +123,9 @@ export class RolecardEngine {
         // 构建并发送消息
         try {
             const wantImage =
-                this.config.enableImage &&
+                belikovCfg?.enableImage &&
                 !!this.imageBuffer &&
-                Math.random() < this.config.imageProbability;
+                Math.random() < belikovCfg.imageProbability;
             if (wantImage && this.imageBuffer) {
                 await session.send([
                     h.text(quote.text),
