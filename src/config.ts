@@ -132,6 +132,6 @@ export const Config = Schema.intersect([
     Schema.object({
         channels: Schema.array(ChannelItem)
             .default([])
-            .description('各群聊/频道的独立配置。未列出的群聊将使用全局默认行为'),
+            .description('群聊白名单：仅此处列出的群聊/频道会响应，未配置的群聊不触发'),
     }),
 ]);

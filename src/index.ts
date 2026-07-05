@@ -87,8 +87,8 @@ export function apply(ctx: Context, config: ConfigType) {
                 __channelBelikov?: NonNullable<ChannelConfig['belikov']>;
             };
 
-            // 用子作用域隔离各引擎，便于按 channelId / botId 过滤消息
-            let subCtx = ctx.guild(ch.channelId);
+            // 用子作用域隔离各引擎，仅接收白名单内群聊的消息
+            let subCtx = ctx.channel(ch.channelId);
             if (ch.botId) subCtx = subCtx.self(ch.botId);
             new RolecardEngine(subCtx, rolecard, engineConfig);
         }
