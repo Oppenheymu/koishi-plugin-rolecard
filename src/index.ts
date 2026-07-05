@@ -4,13 +4,13 @@
  * 架构概览：
  *
  * - `types.ts`   共享类型契约（角色卡内容 + 运行时配置接口）
- * - `config.ts`  配置 Schema 声明（默认值、校验、UI 描述）
+ * - `config.ts`  配置 Schema 声明（默认值、校验、UI 描述、条件联动）
  * - `loader.ts`  角色卡加载器（扫描并解析 assets/ 目录）
  * - `core.ts`    核心引擎（通用台词引擎，与具体角色解耦）
  * - `index.ts`   本文件，组装以上模块并对接 Koishi 生命周期
  *
- * 角色卡是纯数据资源，存放在 `assets/<id>/` 下。用户通过 Config.rolecard
- * 选择要激活的角色卡。新增角色卡只需添加数据目录，无需改动任何源码。
+ * 角色卡是纯数据资源，存放在 `assets/<id>/` 下。用户通过各群聊配置中的
+ * `rolecards` 字段选择该群聊启用哪些角色卡。新增角色卡只需添加数据目录。
  */
 
 import { resolve } from 'node:path';
@@ -18,7 +18,7 @@ import type { Context } from 'koishi';
 import { Config } from './config';
 import { RolecardEngine } from './core';
 import { loadRolecards } from './loader';
-import type { Config as ConfigType } from './types';
+import type { ChannelConfig, Config as ConfigType, Rolecard } from './types';
 
 export const name = 'rolecard';
 
@@ -28,9 +28,9 @@ export const usage = `
   <p>数据驱动的角色台词引擎。核心逻辑与角色卡内容完全解耦——角色卡是纯数据资源（台词库 + 触发词 + 插图），引擎根据数据自动驱动对话。</p>
   <ul>
     <li>在 <code>assets/</code> 目录下放置角色卡，每个角色卡一个子目录</li>
-    <li>通过配置项 <code>rolecard</code> 选择要加载的角色卡 ID</li>
+    <li>在「多群聊配置」中为每个群聊勾选要启用的角色卡</li>
     <li>支持关键词触发（按优先级）与概率随机触发</li>
-    <li>冷却防刷屏、插图发送、响应范围均可配置</li>
+    <li>冷却防刷屏、触发标签开关、插图发送均可按群聊独立配置</li>
   </ul>
   <p>🤝 想贡献新的角色卡？欢迎提交 PR，前往 <a href="https://github.com/Oppenheymu/koishi-plugin-rolecard" style="color:#4a6ee0;text-decoration:none;">仓库</a> 参与共建</p>
 </div>
@@ -56,20 +56,41 @@ export function apply(ctx: Context, config: ConfigType) {
         return;
     }
 
-    const availableIds = rolecards.map((r) => r.manifest.id).join(', ');
-    logger.info(`发现角色卡：${availableIds}`);
+    const rolecardMap = new Map<string, Rolecard>(
+        rolecards.map((r) => [r.manifest.id, r]),
+    );
+    logger.info(`发现角色卡：${[...rolecardMap.keys()].join(', ')}`);
 
-    // 按配置选择角色卡；留空则取第一个
-    const selected = config.rolecard
-        ? rolecards.filter((r) => r.manifest.id === config.rolecard)
-        : [rolecards[0]];
-
-    if (selected.length === 0) {
-        logger.warn(`未找到角色卡 "${config.rolecard}"，可用：${availableIds}`);
-        return;
+    // 按 channelId 索引群聊配置
+    const channelMap = new Map<string, ChannelConfig>();
+    for (const ch of config.channels) {
+        if (ch.channelId) channelMap.set(ch.channelId, ch);
     }
 
-    for (const rolecard of selected) {
-        new RolecardEngine(ctx, rolecard, config);
+    // 为每个群聊配置中启用的角色卡创建引擎实例
+    for (const ch of config.channels) {
+        if (!ch.channelId) continue;
+
+        for (const cardId of ch.rolecards) {
+            const rolecard = rolecardMap.get(cardId);
+            if (!rolecard) {
+                logger.warn(`群聊 ${ch.channelId}：未找到角色卡 "${cardId}"，跳过`);
+                continue;
+            }
+
+            // 将群聊级专属配置注入到引擎可访问的位置
+            // 别里科夫专属配置通过 __channelBelikov 传递
+            const engineConfig = {
+                ...config,
+                __channelBelikov: ch.belikov,
+            } as ConfigType & {
+                __channelBelikov?: NonNullable<ChannelConfig['belikov']>;
+            };
+
+            // 用子作用域隔离各引擎，便于按 channelId / botId 过滤消息
+            let subCtx = ctx.guild(ch.channelId);
+            if (ch.botId) subCtx = subCtx.self(ch.botId);
+            new RolecardEngine(subCtx, rolecard, engineConfig);
+        }
     }
 }

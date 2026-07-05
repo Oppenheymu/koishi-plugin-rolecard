@@ -83,26 +83,53 @@ export interface Rolecard {
     dir: string;
 }
 
+/** 别里科夫专属的触发标签启用项。 */
+export interface BelikovTagConfig {
+    /** 标签名，如 `proposal`、`emotional`。 */
+    tag: string;
+    /** 标签显示别称，如「提议与搞事」。 */
+    name: string;
+    /** 是否启用该标签触发。 */
+    enabled: boolean;
+}
+
+/** 别里科夫角色卡专属配置（仅在群聊勾选别里科夫时生效）。 */
+export interface BelikovChannelConfig {
+    /** 冷却时间（秒），该群聊内两次触发的最小间隔。 */
+    cooldown: number;
+    /** 触发标签启用表，逐项控制每个标签是否在该群聊生效。 */
+    tags: BelikovTagConfig[];
+}
+
+/** 单个群聊/频道的配置项。 */
+export interface ChannelConfig {
+    /** 群号或频道号。 */
+    channelId: string;
+    /** 启用的机器人 selfId，留空表示不限定。 */
+    botId: string;
+    /** 启用的角色卡 ID 列表，如 ['belikov']。 */
+    rolecards: string[];
+    /** 别里科夫专属配置（仅当 rolecards 含 'belikov' 时有效）。 */
+    belikov?: BelikovChannelConfig;
+}
+
 /** 插件运行时配置。所有行为参数统一由此处控制，与角色卡内容解耦。 */
 export interface Config {
-    /** 要激活的角色卡 ID，留空则自动加载第一个找到的角色卡。 */
-    rolecard: string;
-    /** 冷却时间（秒），同一频道内两次触发的最小间隔。 */
-    cooldown: number;
-    /** 冷却白名单用户 ID，这些用户的消息不受冷却限制。 */
+    // ── 基础配置 ──
+    /** 冷却白名单用户 ID，这些用户的消息不受任何冷却限制（用于 Debug）。 */
     cooldownWhitelist: string[];
-    /** 禁用的触发标签，留空表示全部启用。 */
-    disabledTags: string[];
+
+    // ── 多群聊配置 ──
+    /** 各群聊/频道的独立配置列表。 */
+    channels: ChannelConfig[];
+
+    // ── 全局触发概率配置 ──
     /** 是否启用全部消息概率随机触发。 */
     enableRandom: boolean;
-    /** 随机触发概率（0-100）。 */
+    /** 随机触发概率（0-1）。仅在 enableRandom 为真时生效。 */
     randomProbability: number;
     /** 是否启用角色卡插图。 */
     enableImage: boolean;
-    /** 图片与文字是否作为同一条消息发送。 */
-    imageWithMessage: boolean;
-    /** 附带图片的概率（0-100）。 */
+    /** 附带图片的概率（0-1）。仅在 enableImage 为真时生效。 */
     imageProbability: number;
-    /** 响应范围：群聊 / 私聊 / 两者。 */
-    respondIn: 'group' | 'private' | 'both';
 }
