@@ -32,6 +32,7 @@ export const usage = `
     <li>支持关键词触发（按优先级）与概率随机触发</li>
     <li>冷却防刷屏、插图发送、响应范围均可配置</li>
   </ul>
+  <p>🤝 想贡献新的角色卡？欢迎提交 PR，前往 <a href="https://github.com/Oppenheymu/koishi-plugin-rolecard" style="color:#4a6ee0;text-decoration:none;">仓库</a> 参与共建</p>
 </div>
 
 <div style="border-radius: 10px; border: 1px solid #ddd; padding: 16px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
