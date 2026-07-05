@@ -5,11 +5,11 @@
  *
  * - `types.ts`   共享类型契约（角色卡内容 + 运行时配置接口）
  * - `config.ts`  配置 Schema 声明（默认值、校验、UI 描述）
- * - `loader.ts`  角色卡加载器（扫描并解析 rolecards/ 目录）
+ * - `loader.ts`  角色卡加载器（扫描并解析 assets/ 目录）
  * - `core.ts`    核心引擎（通用台词引擎，与具体角色解耦）
  * - `index.ts`   本文件，组装以上模块并对接 Koishi 生命周期
  *
- * 角色卡是纯数据资源，存放在 `rolecards/<id>/` 下。用户通过 Config.rolecard
+ * 角色卡是纯数据资源，存放在 `assets/<id>/` 下。用户通过 Config.rolecard
  * 选择要激活的角色卡。新增角色卡只需添加数据目录，无需改动任何源码。
  */
 
@@ -27,7 +27,7 @@ export const usage = `
   <h2 style="margin-top: 0; color: #4a6ee0;">🎭 角色卡插件 · Rolecard</h2>
   <p>数据驱动的角色台词引擎。核心逻辑与角色卡内容完全解耦——角色卡是纯数据资源（台词库 + 触发词 + 插图），引擎根据数据自动驱动对话。</p>
   <ul>
-    <li>在 <code>rolecards/</code> 目录下放置角色卡，每个角色卡一个子目录</li>
+    <li>在 <code>assets/</code> 目录下放置角色卡，每个角色卡一个子目录</li>
     <li>通过配置项 <code>rolecard</code> 选择要加载的角色卡 ID</li>
     <li>支持关键词触发（按优先级）与概率随机触发</li>
     <li>冷却防刷屏、插图发送、响应范围均可配置</li>
@@ -46,12 +46,12 @@ export { Config };
 export function apply(ctx: Context, config: ConfigType) {
     const logger = ctx.logger('rolecard');
 
-    // 角色卡目录位于插件包根目录下的 rolecards/
-    const rolecardsDir = resolve(__dirname, '..', 'rolecards');
-    const rolecards = loadRolecards(rolecardsDir);
+    // 角色卡目录位于插件包根目录下的 assets/
+    const assetsDir = resolve(__dirname, '..', 'assets');
+    const rolecards = loadRolecards(assetsDir);
 
     if (rolecards.length === 0) {
-        logger.warn('未找到任何角色卡，请检查 rolecards 目录');
+        logger.warn('未找到任何角色卡，请检查 assets 目录');
         return;
     }
 

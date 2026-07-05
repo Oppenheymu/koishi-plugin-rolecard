@@ -16,7 +16,7 @@
   },
   "files": [
     "lib",
-    "rolecards"
+    "assets"
   ],
   "license": "MIT",
   "publishConfig": {
