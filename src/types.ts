@@ -68,8 +68,14 @@ export interface RolecardManifest {
     wordsFile?: string;
     /** 触发词文件名，默认 `trigger-words.json`。 */
     triggerFile?: string;
-    /** 插图文件名，默认 `image.png`。 */
-    imageFile?: string;
+}
+
+/** 单张插图的路径与 MIME 类型。 */
+export interface RolecardImage {
+    /** 插图绝对路径。 */
+    path: string;
+    /** MIME 类型，如 `image/png`、`image/jpeg`。 */
+    mime: string;
 }
 
 /** 已加载的完整角色卡，包含清单与解析后的数据。 */
@@ -77,8 +83,8 @@ export interface Rolecard {
     manifest: RolecardManifest;
     words: WordsData;
     triggers: TriggerData;
-    /** 插图绝对路径，无插图时为 null。 */
-    imagePath: string | null;
+    /** 所有插图的路径与 MIME 类型，无插图时为空数组。 */
+    images: RolecardImage[];
     /** 角色卡目录绝对路径。 */
     dir: string;
 }

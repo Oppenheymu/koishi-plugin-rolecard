@@ -29,7 +29,7 @@ export class RolecardEngine {
     private readonly quotesByTag = new Map<string, Quote[]>();
     private readonly allQuotes: Quote[];
     private readonly groups: Rolecard['triggers']['groups'];
-    private imageBuffer: Buffer | null = null;
+    private readonly imageBuffers: { buffer: Buffer; mime: string }[] = [];
     private readonly lastTrigger = new Map<string, number>();
 
     constructor(
@@ -57,12 +57,18 @@ export class RolecardEngine {
             (a, b) => a.priority - b.priority,
         );
 
-        // 预加载插图到内存
-        if (rolecard.imagePath) {
-            try {
-                this.imageBuffer = readFileSync(rolecard.imagePath);
-            } catch {
-                this.imageBuffer = null;
+        // 预加载所有插图到内存
+        if (rolecard.images.length > 0) {
+            for (const img of rolecard.images) {
+                try {
+                    const buffer = readFileSync(img.path);
+                    this.imageBuffers.push({ buffer, mime: img.mime });
+                } catch {
+                    // 单张加载失败不影响其他图片
+                }
+            }
+            if (this.imageBuffers.length === 0) {
+                this.logger.warn('所有插图加载失败，将不发送图片');
             }
         } else {
             this.logger.warn('未找到角色卡插图，将不发送图片');
@@ -124,12 +130,13 @@ export class RolecardEngine {
         try {
             const wantImage =
                 belikovCfg?.enableImage &&
-                !!this.imageBuffer &&
+                this.imageBuffers.length > 0 &&
                 Math.random() < belikovCfg.imageProbability;
-            if (wantImage && this.imageBuffer) {
+            if (wantImage) {
+                const img = pick(this.imageBuffers);
                 await session.send([
                     h.text(quote.text),
-                    h.image(this.imageBuffer, 'image/png'),
+                    h.image(img.buffer, img.mime),
                 ]);
             } else {
                 await session.send(quote.text);

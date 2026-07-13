@@ -6,20 +6,41 @@
  * - `rolecard.json`        清单（必填）
  * - `words.json`           台词库（必填，文件名可由清单指定）
  * - `trigger-words.json`   触发词配置（必填，文件名可由清单指定）
- * - `image.png`            插图（可选，文件名可由清单指定）
+ * - `*.png` / `*.jpg` 等   插图（可选，自动扫描目录下所有图片）
  *
  * 加载器只做「读取与校验」，不做任何消息处理逻辑，
  * 因此核心引擎可以专注于运行时行为，二者完全解耦。
  */
 
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
-import { resolve } from 'node:path';
-import type { Rolecard, RolecardManifest, TriggerData, WordsData } from './types';
+import { extname, resolve } from 'node:path';
+import type { Rolecard, RolecardImage, RolecardManifest, TriggerData, WordsData } from './types';
 
 /** 清单中路径字段的默认值。 */
 const DEFAULT_WORDS_FILE = 'words.json';
 const DEFAULT_TRIGGER_FILE = 'trigger-words.json';
-const DEFAULT_IMAGE_FILE = 'image.png';
+
+/** 支持的图片扩展名到 MIME 类型映射。 */
+const IMAGE_MIME_MAP: Record<string, string> = {
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.gif': 'image/gif',
+    '.webp': 'image/webp',
+    '.bmp': 'image/bmp',
+};
+
+/** 扫描目录下所有支持的图片文件，返回带 MIME 类型的列表。 */
+function scanImages(dir: string): RolecardImage[] {
+    const images: RolecardImage[] = [];
+    for (const entry of readdirSync(dir)) {
+        const ext = extname(entry).toLowerCase();
+        const mime = IMAGE_MIME_MAP[ext];
+        if (!mime) continue;
+        images.push({ path: resolve(dir, entry), mime });
+    }
+    return images;
+}
 
 function readJson<T>(path: string): T | null {
     if (!existsSync(path)) return null;
@@ -41,18 +62,18 @@ export function loadRolecard(dir: string): Rolecard | null {
 
     const wordsFile = manifest.wordsFile ?? DEFAULT_WORDS_FILE;
     const triggerFile = manifest.triggerFile ?? DEFAULT_TRIGGER_FILE;
-    const imageFile = manifest.imageFile ?? DEFAULT_IMAGE_FILE;
 
     const words = readJson<WordsData>(resolve(dir, wordsFile));
     const triggers = readJson<TriggerData>(resolve(dir, triggerFile));
     if (!words || !triggers || !Array.isArray(triggers.groups)) return null;
 
-    const imagePath = resolve(dir, imageFile);
+    // 扫描目录下所有支持的图片文件，实现多图随机发送
+    const images = scanImages(dir);
     return {
         manifest,
         words,
         triggers,
-        imagePath: existsSync(imagePath) ? imagePath : null,
+        images,
         dir,
     };
 }

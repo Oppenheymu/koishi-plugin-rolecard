@@ -24,45 +24,43 @@ const belikovTagOptions: { tag: string; name: string }[] = [
 ];
 
 /** 别里科夫专属配置组 Schema。 */
-const BelikovConfig = Schema.object({
-    belikovConfig: Schema.object({
-        cooldown: Schema.number()
-            .default(60)
-            .min(0)
-            .description('别里科夫冷却时间（秒），该群聊内两次触发的最小间隔'),
-        tags: Schema.array(
-            Schema.object({
-                tag: Schema.string().required().description('标签名'),
-                name: Schema.string().required().description('标签别称'),
-                enabled: Schema.boolean()
-                    .default(true)
-                    .description('是否启用该标签触发'),
-            }),
-        )
-            .role('table')
-            .default(belikovTagOptions.map((t) => ({ ...t, enabled: true })))
-            .description('启用的触发标签：逐项控制每个标签是否在该群聊生效'),
-        enableRandom: Schema.boolean()
-            .default(false)
-            .description('启用全部消息概率随机触发（神预言效果）'),
-        randomProbability: Schema.number()
-            .default(0.03)
-            .min(0)
-            .max(1)
-            .step(0.01)
-            .description('随机触发概率（0-1，如 0.03 表示 3%）'),
-        enableImage: Schema.boolean()
-            .default(false)
-            .description('启用角色卡插图'),
-        imageProbability: Schema.number()
-            .default(1)
-            .min(0)
-            .max(1)
-            .step(0.01)
-            .description('附带图片的概率（0-1，如 1 表示每次触发都发图）'),
-    // biome-ignore lint/suspicious/noExplicitAny: 空对象 default 由 resolver 填充各字段默认值
-    }).description('别里科夫专属配置').default({} as any),
-});
+const belikovConfigSchema = Schema.object({
+    cooldown: Schema.number()
+        .default(60)
+        .min(0)
+        .description('别里科夫冷却时间（秒），该群聊内两次触发的最小间隔'),
+    tags: Schema.array(
+        Schema.object({
+            tag: Schema.string().required().description('标签名'),
+            name: Schema.string().required().description('标签别称'),
+            enabled: Schema.boolean()
+                .default(true)
+                .description('是否启用该标签触发'),
+        }),
+    )
+        .role('table')
+        .default(belikovTagOptions.map((t) => ({ ...t, enabled: true })))
+        .description('启用的触发标签：逐项控制每个标签是否在该群聊生效'),
+    enableRandom: Schema.boolean()
+        .default(false)
+        .description('启用全部消息概率随机触发（神预言效果）'),
+    randomProbability: Schema.number()
+        .default(0.03)
+        .min(0)
+        .max(1)
+        .step(0.01)
+        .description('随机触发概率（0-1，如 0.03 表示 3%）'),
+    enableImage: Schema.boolean()
+        .default(false)
+        .description('启用角色卡插图'),
+    imageProbability: Schema.number()
+        .default(1)
+        .min(0)
+        .max(1)
+        .step(0.01)
+        .description('附带图片的概率（0-1，如 1 表示每次触发都发图）'),
+// biome-ignore lint/suspicious/noExplicitAny: 空对象 default 由 resolver 填充各字段默认值
+}).description('别里科夫专属配置').default({} as any);
 
 // ──────────────────────────────────────────────────────────────
 // 群聊配置项
@@ -91,7 +89,7 @@ const ChannelItem = Schema.intersect([
     Schema.union([
         Schema.object({
             belikov: Schema.const(true).required(),
-            ...BelikovConfig.dict,
+            belikovConfig: belikovConfigSchema,
         }),
         Schema.object({}),
     ]),
