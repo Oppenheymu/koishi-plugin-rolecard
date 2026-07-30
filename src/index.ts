@@ -56,9 +56,7 @@ export function apply(ctx: Context, config: ConfigType) {
         return;
     }
 
-    const rolecardMap = new Map<string, Rolecard>(
-        rolecards.map((r) => [r.manifest.id, r]),
-    );
+    const rolecardMap = new Map<string, Rolecard>(rolecards.map((r) => [r.manifest.id, r]));
     logger.info(`发现角色卡：${[...rolecardMap.keys()].join(', ')}`);
 
     // 按 channelId 索引群聊配置
@@ -80,9 +78,9 @@ export function apply(ctx: Context, config: ConfigType) {
                 // 将群聊级专属配置注入到引擎可访问的位置
                 const engineConfig = {
                     ...config,
-                    __channelBelikov: ch.belikovConfig,
+                    __channelRoleConfig: ch.belikovConfig,
                 } as ConfigType & {
-                    __channelBelikov?: NonNullable<ChannelConfig['belikovConfig']>;
+                    __channelRoleConfig?: NonNullable<ChannelConfig['belikovConfig']>;
                 };
 
                 // 用子作用域隔离各引擎，仅接收白名单内群聊的消息
@@ -92,6 +90,23 @@ export function apply(ctx: Context, config: ConfigType) {
             }
         }
 
-        // 后续扩展新角色卡时，在此添加 else if 分支
+        // 格里高尔角色卡
+        if (ch.gregorSamsa) {
+            const rolecard = rolecardMap.get('gregor-samsa');
+            if (!rolecard) {
+                logger.warn(`群聊 ${ch.channelId}：未找到角色卡 "gregor-samsa"，跳过`);
+            } else {
+                const engineConfig = {
+                    ...config,
+                    __channelRoleConfig: ch.gregorSamsaConfig,
+                } as ConfigType & {
+                    __channelRoleConfig?: NonNullable<ChannelConfig['gregorSamsaConfig']>;
+                };
+
+                let subCtx = ctx.channel(ch.channelId);
+                if (ch.botId) subCtx = subCtx.self(ch.botId);
+                new RolecardEngine(subCtx, rolecard, engineConfig);
+            }
+        }
     }
 }

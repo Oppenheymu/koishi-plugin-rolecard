@@ -89,9 +89,9 @@ export interface Rolecard {
     dir: string;
 }
 
-/** 别里科夫专属的触发标签启用项。 */
-export interface BelikovTagConfig {
-    /** 标签名，如 `proposal`、`emotional`。 */
+/** 角色卡专属的触发标签启用项。 */
+export interface TagButtonConfig {
+    /** 标签名，如 `proposal`、`work`。 */
     tag: string;
     /** 标签显示别称，如「提议与搞事」。 */
     name: string;
@@ -99,12 +99,12 @@ export interface BelikovTagConfig {
     enabled: boolean;
 }
 
-/** 别里科夫角色卡专属配置（仅在群聊勾选别里科夫时生效）。 */
-export interface BelikovChannelConfig {
+/** 角色卡专属配置（按群聊覆盖默认值）。 */
+export interface RoleChannelConfig {
     /** 冷却时间（秒），该群聊内两次触发的最小间隔。 */
     cooldown: number;
     /** 触发标签启用表，逐项控制每个标签是否在该群聊生效。 */
-    tags: BelikovTagConfig[];
+    tags: TagButtonConfig[];
     /** 是否启用全部消息概率随机触发。 */
     enableRandom: boolean;
     /** 随机触发概率（0-1）。仅在 enableRandom 为真时生效。 */
@@ -115,6 +115,11 @@ export interface BelikovChannelConfig {
     imageProbability: number;
 }
 
+/** @deprecated 使用 RoleChannelConfig 替代 */
+export type BelikovChannelConfig = RoleChannelConfig;
+/** @deprecated 使用 TagButtonConfig 替代 */
+export type BelikovTagConfig = TagButtonConfig;
+
 /** 单个群聊/频道的配置项。 */
 export interface ChannelConfig {
     /** 群号或频道号。 */
@@ -124,7 +129,11 @@ export interface ChannelConfig {
     /** 是否启用别里科夫角色卡。 */
     belikov: boolean;
     /** 别里科夫专属配置（仅当 belikov 为 true 时有效）。 */
-    belikovConfig?: BelikovChannelConfig;
+    belikovConfig?: RoleChannelConfig;
+    /** 是否启用格里高尔角色卡。 */
+    gregorSamsa: boolean;
+    /** 格里高尔专属配置（仅当 gregorSamsa 为 true 时有效）。 */
+    gregorSamsaConfig?: RoleChannelConfig;
 }
 
 /** 插件运行时配置。所有行为参数统一由此处控制，与角色卡内容解耦。 */

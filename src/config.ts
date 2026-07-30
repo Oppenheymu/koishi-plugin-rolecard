@@ -12,55 +12,75 @@
 import { Schema } from 'koishi';
 
 // ──────────────────────────────────────────────────────────────
-// 别里科夫专属配置
+// 角色卡专属配置（通用工厂）
 // ──────────────────────────────────────────────────────────────
 
+/**
+ * 根据角色卡标签选项创建专属配置 Schema。
+ * 所有角色卡的专属配置结构完全一致，仅标签选项不同。
+ */
+function makeRoleConfigSchema(roleName: string, tagOptions: { tag: string; name: string }[]) {
+    return (
+        Schema.object({
+            cooldown: Schema.number()
+                .default(60)
+                .min(0)
+                .description(`${roleName}冷却时间（秒），该群聊内两次触发的最小间隔`),
+            tags: Schema.array(
+                Schema.object({
+                    tag: Schema.string().required().description('标签名'),
+                    name: Schema.string().required().description('标签别称'),
+                    enabled: Schema.boolean().default(true).description('是否启用该标签触发'),
+                })
+            )
+                .role('table')
+                .default(tagOptions.map((t) => ({ ...t, enabled: true })))
+                .description('启用的触发标签：逐项控制每个标签是否在该群聊生效'),
+            enableRandom: Schema.boolean()
+                .default(false)
+                .description('启用全部消息概率随机触发（神预言效果）'),
+            randomProbability: Schema.number()
+                .default(0.03)
+                .min(0)
+                .max(1)
+                .step(0.01)
+                .description('随机触发概率（0-1，如 0.03 表示 3%）'),
+            enableImage: Schema.boolean().default(false).description('启用角色卡插图'),
+            imageProbability: Schema.number()
+                .default(1)
+                .min(0)
+                .max(1)
+                .step(0.01)
+                .description('附带图片的概率（0-1，如 1 表示每次触发都发图）'),
+        })
+            .description(`${roleName}专属配置`)
+            // biome-ignore lint/suspicious/noExplicitAny: 空对象 default 由 resolver 填充各字段默认值
+            .default({} as any)
+    );
+}
+
 /** 别里科夫的标签选项（与 trigger-words.json 中的 groups 对应）。 */
-const belikovTagOptions: { tag: string; name: string }[] = [
+const belikovTagOptions = [
     { tag: 'proposal', name: '提议与搞事' },
     { tag: 'emotional', name: '情绪波动与违规边缘' },
     { tag: 'rules', name: '规章制度与日常通知' },
     { tag: 'distancing', name: '撇清关系与甩锅' },
 ];
 
+/** 格里高尔的标签选项（与 trigger-words.json 中的 groups 对应）。 */
+const gregorSamsaTagOptions = [
+    { tag: 'work', name: '工作与加班' },
+    { tag: 'late', name: '迟到与请假' },
+    { tag: 'despair', name: '破防与绝望' },
+    { tag: 'family', name: '家庭与责任' },
+    { tag: 'body', name: '变形与身体' },
+    { tag: 'music', name: '音乐与美好' },
+];
+
 /** 别里科夫专属配置组 Schema。 */
-const belikovConfigSchema = Schema.object({
-    cooldown: Schema.number()
-        .default(60)
-        .min(0)
-        .description('别里科夫冷却时间（秒），该群聊内两次触发的最小间隔'),
-    tags: Schema.array(
-        Schema.object({
-            tag: Schema.string().required().description('标签名'),
-            name: Schema.string().required().description('标签别称'),
-            enabled: Schema.boolean()
-                .default(true)
-                .description('是否启用该标签触发'),
-        }),
-    )
-        .role('table')
-        .default(belikovTagOptions.map((t) => ({ ...t, enabled: true })))
-        .description('启用的触发标签：逐项控制每个标签是否在该群聊生效'),
-    enableRandom: Schema.boolean()
-        .default(false)
-        .description('启用全部消息概率随机触发（神预言效果）'),
-    randomProbability: Schema.number()
-        .default(0.03)
-        .min(0)
-        .max(1)
-        .step(0.01)
-        .description('随机触发概率（0-1，如 0.03 表示 3%）'),
-    enableImage: Schema.boolean()
-        .default(false)
-        .description('启用角色卡插图'),
-    imageProbability: Schema.number()
-        .default(1)
-        .min(0)
-        .max(1)
-        .step(0.01)
-        .description('附带图片的概率（0-1，如 1 表示每次触发都发图）'),
-// biome-ignore lint/suspicious/noExplicitAny: 空对象 default 由 resolver 填充各字段默认值
-}).description('别里科夫专属配置').default({} as any);
+const belikovConfigSchema = makeRoleConfigSchema('别里科夫', belikovTagOptions);
+/** 格里高尔专属配置组 Schema。 */
+const gregorSamsaConfigSchema = makeRoleConfigSchema('格里高尔', gregorSamsaTagOptions);
 
 // ──────────────────────────────────────────────────────────────
 // 群聊配置项
@@ -76,20 +96,22 @@ const belikovConfigSchema = Schema.object({
  */
 const ChannelItem = Schema.intersect([
     Schema.object({
-        channelId: Schema.string()
-            .required()
-            .description('群号或频道号'),
-        botId: Schema.string()
-            .default('')
-            .description('启用的机器人 selfId（留空表示不限定）'),
-        belikov: Schema.boolean()
-            .default(false)
-            .description('启用别里科夫 · 套中人'),
+        channelId: Schema.string().required().description('群号或频道号'),
+        botId: Schema.string().default('').description('启用的机器人 selfId（留空表示不限定）'),
+        belikov: Schema.boolean().default(false).description('启用别里科夫 · 套中人'),
+        gregorSamsa: Schema.boolean().default(false).description('启用格里高尔 · 变形记'),
     }),
     Schema.union([
         Schema.object({
             belikov: Schema.const(true).required(),
             belikovConfig: belikovConfigSchema,
+        }),
+        Schema.object({}),
+    ]),
+    Schema.union([
+        Schema.object({
+            gregorSamsa: Schema.const(true).required(),
+            gregorSamsaConfig: gregorSamsaConfigSchema,
         }),
         Schema.object({}),
     ]),

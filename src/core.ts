@@ -35,7 +35,7 @@ export class RolecardEngine {
     constructor(
         ctx: Context,
         private readonly rolecard: Rolecard,
-        private readonly config: Config,
+        private readonly config: Config
     ) {
         this.logger = ctx.logger(`rolecard:${rolecard.manifest.id}`);
 
@@ -53,9 +53,7 @@ export class RolecardEngine {
         this.allQuotes = rolecard.words.quotes;
 
         // 按优先级排序触发词分组（数字越小越优先）
-        this.groups = [...rolecard.triggers.groups].sort(
-            (a, b) => a.priority - b.priority,
-        );
+        this.groups = [...rolecard.triggers.groups].sort((a, b) => a.priority - b.priority);
 
         // 预加载所有插图到内存
         if (rolecard.images.length > 0) {
@@ -111,13 +109,10 @@ export class RolecardEngine {
 
         // 2. 未命中关键词时按概率随机触发
         let quote: Quote | null = null;
-        const belikovCfg = this.getBelikovConfig();
+        const chCfg = this.getChannelConfig();
         if (matchedTag) {
             quote = pick(this.quotesByTag.get(matchedTag) ?? this.allQuotes);
-        } else if (
-            belikovCfg?.enableRandom &&
-            Math.random() < belikovCfg.randomProbability
-        ) {
+        } else if (chCfg?.enableRandom && Math.random() < chCfg.randomProbability) {
             quote = pick(this.allQuotes);
         }
 
@@ -129,15 +124,12 @@ export class RolecardEngine {
         // 构建并发送消息
         try {
             const wantImage =
-                belikovCfg?.enableImage &&
+                chCfg?.enableImage &&
                 this.imageBuffers.length > 0 &&
-                Math.random() < belikovCfg.imageProbability;
+                Math.random() < chCfg.imageProbability;
             if (wantImage) {
                 const img = pick(this.imageBuffers);
-                await session.send([
-                    h.text(quote.text),
-                    h.image(img.buffer, img.mime),
-                ]);
+                await session.send([h.text(quote.text), h.image(img.buffer, img.mime)]);
             } else {
                 await session.send(quote.text);
             }
@@ -148,32 +140,35 @@ export class RolecardEngine {
 
     /**
      * 获取该群聊的冷却时间。
-     * 若角色卡有专属配置（如别里科夫）则取其 cooldown，否则返回 0（不冷却）。
+     * 若角色卡有专属配置则取其 cooldown，否则返回 0（不冷却）。
      */
     private getChannelCooldown(): number {
-        const belikovCfg = this.getBelikovConfig();
-        if (belikovCfg) return belikovCfg.cooldown;
+        const chCfg = this.getChannelConfig();
+        if (chCfg) return chCfg.cooldown;
         return 0;
     }
 
     /**
      * 获取该群聊禁用的触发标签。
-     * 若角色卡有专属配置（如别里科夫）则从其 tags 表中取 enabled=false 的标签。
+     * 若角色卡有专属配置则从其 tags 表中取 enabled=false 的标签。
      */
     private getDisabledTags(): string[] {
-        const belikovCfg = this.getBelikovConfig();
-        if (!belikovCfg) return [];
-        return belikovCfg.tags.filter((t) => !t.enabled).map((t) => t.tag);
+        const chCfg = this.getChannelConfig();
+        if (!chCfg) return [];
+        return chCfg.tags.filter((t) => !t.enabled).map((t) => t.tag);
     }
 
     /**
-     * 获取别里科夫专属配置（仅当当前引擎的角色卡是别里科夫时）。
-     * 调用方需确保 config.channels 中存在对应 channelId 的配置。
+     * 获取当前角色卡的群聊级专属配置。
+     * 由 index.ts 在引擎实例化时通过 __channelRoleConfig 注入。
      */
-    private getBelikovConfig() {
-        if (this.rolecard.manifest.id !== 'belikov') return null;
-        // 由 index.ts 注入的 ChannelConfig 通过闭包传递
-        // 这里简化处理：belikov 配置直接挂在 config 上（见 index.ts 的引擎实例化逻辑）
-        return (this.config as Config & { __channelBelikov?: NonNullable<Config['channels'][number]['belikovConfig']> }).__channelBelikov ?? null;
+    private getChannelConfig() {
+        return (
+            (
+                this.config as Config & {
+                    __channelRoleConfig?: Config['channels'][number]['belikovConfig'];
+                }
+            ).__channelRoleConfig ?? null
+        );
     }
 }
