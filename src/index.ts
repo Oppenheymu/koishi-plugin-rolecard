@@ -146,5 +146,24 @@ export function apply(ctx: Context, config: ConfigType) {
                 new RolecardEngine(subCtx, rolecard, engineConfig);
             }
         }
+
+        // 哈姆雷特角色卡
+        if (ch.hamlet) {
+            const rolecard = rolecardMap.get('hamlet');
+            if (!rolecard) {
+                logger.warn(`群聊 ${ch.channelId}：未找到角色卡 "hamlet"，跳过`);
+            } else {
+                const engineConfig = {
+                    ...config,
+                    __channelRoleConfig: ch.hamletConfig,
+                } as ConfigType & {
+                    __channelRoleConfig?: NonNullable<ChannelConfig['hamletConfig']>;
+                };
+
+                let subCtx = ctx.channel(ch.channelId);
+                if (ch.botId) subCtx = subCtx.self(ch.botId);
+                new RolecardEngine(subCtx, rolecard, engineConfig);
+            }
+        }
     }
 }

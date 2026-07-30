@@ -97,6 +97,15 @@ const ahQTagOptions = [
     { tag: 'trial', name: '糊涂受审' },
 ];
 
+/** 哈姆雷特的标签选项（与 trigger-words.json 中的 groups 对应）。 */
+const hamletTagOptions = [
+    { tag: 'ponder', name: '沉思与独白' },
+    { tag: 'madness', name: '装疯卖傻' },
+    { tag: 'revenge', name: '复仇与愤怒' },
+    { tag: 'despair', name: '绝望与厌世' },
+    { tag: 'action', name: '行动与决断' },
+];
+
 /** 别里科夫专属配置组 Schema。 */
 const belikovConfigSchema = makeRoleConfigSchema('别里科夫', belikovTagOptions);
 /** 格里高尔专属配置组 Schema。 */
@@ -105,6 +114,8 @@ const gregorSamsaConfigSchema = makeRoleConfigSchema('格里高尔', gregorSamsa
 const kongYijiConfigSchema = makeRoleConfigSchema('孔乙己', kongYijiTagOptions);
 /** 阿Q专属配置组 Schema。 */
 const ahQConfigSchema = makeRoleConfigSchema('阿Q', ahQTagOptions);
+/** 哈姆雷特专属配置组 Schema。 */
+const hamletConfigSchema = makeRoleConfigSchema('哈姆雷特', hamletTagOptions);
 
 // ──────────────────────────────────────────────────────────────
 // 群聊配置项
@@ -126,6 +137,7 @@ const ChannelItem = Schema.intersect([
         gregorSamsa: Schema.boolean().default(false).description('启用格里高尔 · 变形记'),
         kongYiji: Schema.boolean().default(false).description('启用孔乙己 · 孔乙己'),
         ahQ: Schema.boolean().default(false).description('启用阿Q · 阿Q正传'),
+        hamlet: Schema.boolean().default(false).description('启用哈姆雷特 · 哈姆雷特'),
     }),
     Schema.union([
         Schema.object({
@@ -152,6 +164,13 @@ const ChannelItem = Schema.intersect([
         Schema.object({
             ahQ: Schema.const(true).required(),
             ahQConfig: ahQConfigSchema,
+        }),
+        Schema.object({}),
+    ]),
+    Schema.union([
+        Schema.object({
+            hamlet: Schema.const(true).required(),
+            hamletConfig: hamletConfigSchema,
         }),
         Schema.object({}),
     ]),

@@ -142,6 +142,10 @@ export interface ChannelConfig {
     ahQ: boolean;
     /** 阿Q专属配置（仅当 ahQ 为 true 时有效）。 */
     ahQConfig?: RoleChannelConfig;
+    /** 是否启用哈姆雷特角色卡。 */
+    hamlet: boolean;
+    /** 哈姆雷特专属配置（仅当 hamlet 为 true 时有效）。 */
+    hamletConfig?: RoleChannelConfig;
 }
 
 /** 插件运行时配置。所有行为参数统一由此处控制，与角色卡内容解耦。 */
