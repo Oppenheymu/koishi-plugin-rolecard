@@ -1,49 +1,49 @@
 {
-  "name": "koishi-plugin-rolecard",
-  "version": "1.3.0",
-  "contributors": [
-    "Oppenheymu <oppenheymu@gmail.com>"
-  ],
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./lib/index.d.ts",
-      "development": "./src/index.ts",
-      "default": "./lib/index.js"
+    "name": "koishi-plugin-rolecard",
+    "version": "1.4.0",
+    "contributors": [
+        "Oppenheymu <oppenheymu@gmail.com>"
+    ],
+    "main": "lib/index.js",
+    "types": "lib/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./lib/index.d.ts",
+            "development": "./src/index.ts",
+            "default": "./lib/index.js"
+        },
+        "./package.json": "./package.json"
     },
-    "./package.json": "./package.json"
-  },
-  "files": [
-    "lib",
-    "assets"
-  ],
-  "license": "MIT",
-  "publishConfig": {
-    "access": "public"
-  },
-  "homepage": "https://github.com/Oppenheymu/koishi-plugin-rolecard",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Oppenheymu/koishi-plugin-rolecard.git"
-  },
-  "keywords": [
-    "chatbot",
-    "koishi",
-    "plugin",
-    "rolecard"
-  ],
-  "scripts": {
-    "build": "tsc -b"
-  },
-  "peerDependencies": {
-    "koishi": "^4.17.4"
-  },
-  "koishi": {
-    "description": {
-      "en": "Rolecard plugin — data-driven character quote engine",
-      "zh": "身份卡插件 · 数据驱动的角色台词引擎，可选加载不同角色卡"
+    "files": [
+        "lib",
+        "assets"
+    ],
+    "license": "MIT",
+    "publishConfig": {
+        "access": "public"
     },
-    "service": {}
-  }
+    "homepage": "https://github.com/Oppenheymu/koishi-plugin-rolecard",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Oppenheymu/koishi-plugin-rolecard.git"
+    },
+    "keywords": [
+        "chatbot",
+        "koishi",
+        "plugin",
+        "rolecard"
+    ],
+    "scripts": {
+        "build": "tsc -b"
+    },
+    "peerDependencies": {
+        "koishi": "^4.17.4"
+    },
+    "koishi": {
+        "description": {
+            "en": "Rolecard plugin — data-driven character quote engine",
+            "zh": "身份卡插件 · 数据驱动的角色台词引擎，可选加载不同角色卡"
+        },
+        "service": {}
+    }
 }
