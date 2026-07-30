@@ -1,0 +1,67 @@
+{
+    "character": "阿Q",
+    "source": "鲁迅《阿Q正传》",
+    "desc": "精神胜利法大师，未庄第一个自轻自贱的人。每条语录带 tags，与 trigger-words.json 中的 group.tag 对应。",
+    "tags": {
+        "victory": "精神胜利：被打被辱后总能找到办法说服自己赢了",
+        "curse": "骂人嘴硬：被欺负时的反击、咒骂与不屑",
+        "bully": "欺软怕硬：对小尼姑小D耍横，对赵太爷假洋鬼子认怂",
+        "revolution": "革命幻想：听说革命就做起了发财抢东西的梦",
+        "poor": "穷酸炫耀：从城里回来吹牛、现钱打酒摆阔",
+        "trial": "糊涂受审：公堂上答非所问，画押画不圆"
+    },
+    "quotes": [
+        {
+            "id": "a01",
+            "text": "我们先前——比你阔的多啦！你算是什么东西！",
+            "tags": ["victory", "curse"]
+        },
+        { "id": "a02", "text": "你还不配……", "tags": ["victory", "curse"] },
+        { "id": "a03", "text": "我总算被儿子打了，现在的世界真不像样……", "tags": ["victory"] },
+        { "id": "a04", "text": "打虫豸，好不好？我是虫豸——还不放么？", "tags": ["victory"] },
+        { "id": "a05", "text": "现在的世界太不成话，儿子打老子……", "tags": ["victory", "curse"] },
+        { "id": "a06", "text": "我是虫豸，好么？", "tags": ["victory", "bully"] },
+        { "id": "a07", "text": "这毛虫！", "tags": ["curse"] },
+        { "id": "a08", "text": "秃儿。驴……", "tags": ["curse", "bully"] },
+        {
+            "id": "a09",
+            "text": "我不知道我今天为什么这样晦气，原来就因为见了你！",
+            "tags": ["curse", "victory"]
+        },
+        { "id": "a10", "text": "咳，呸！", "tags": ["curse"] },
+        { "id": "a11", "text": "秃儿！快回去，和尚等着你……", "tags": ["bully", "curse"] },
+        { "id": "a12", "text": "和尚动得，我动不得？", "tags": ["bully"] },
+        { "id": "a13", "text": "我和你困觉，我和你困觉！", "tags": ["bully"] },
+        { "id": "a14", "text": "女人，女人！", "tags": ["bully"] },
+        { "id": "a15", "text": "记着罢，妈妈的……", "tags": ["curse"] },
+        { "id": "a16", "text": "妈妈的，记着罢……", "tags": ["curse"] },
+        { "id": "a17", "text": "妈妈的……", "tags": ["curse"] },
+        { "id": "a18", "text": "我什么时候跳进你的园里来偷萝卜？", "tags": ["poor"] },
+        { "id": "a19", "text": "这是你的？你能叫得他答应你么？", "tags": ["poor"] },
+        { "id": "a20", "text": "现钱！打酒来！", "tags": ["poor"] },
+        { "id": "a21", "text": "回来了。", "tags": ["poor"] },
+        { "id": "a22", "text": "穷朋友？你总比我有钱。", "tags": ["poor", "curse"] },
+        { "id": "a23", "text": "造反了！造反了！", "tags": ["revolution"] },
+        { "id": "a24", "text": "发财？自然。要什么就是什么……", "tags": ["revolution", "poor"] },
+        { "id": "a25", "text": "同去同去！", "tags": ["revolution"] },
+        {
+            "id": "a26",
+            "text": "革这伙妈妈的命，太可恶！太可恨！……便是我，也要投降革命党了。",
+            "tags": ["revolution", "curse"]
+        },
+        {
+            "id": "a27",
+            "text": "不准我造反，只准你造反？妈妈的假洋鬼子，——好，你造反！造反是杀头的罪名呵，我总要告一状，看你抓进县里去杀头，——满门抄斩，——嚓！嚓！",
+            "tags": ["revolution", "curse"]
+        },
+        { "id": "a28", "text": "我要投……", "tags": ["revolution", "trial"] },
+        { "id": "a29", "text": "假洋鬼子不准我！", "tags": ["revolution", "trial", "bully"] },
+        { "id": "a30", "text": "因为我想造反。", "tags": ["trial", "revolution"] },
+        { "id": "a31", "text": "我本来要……来投……", "tags": ["trial"] },
+        { "id": "a32", "text": "他们没有来叫我。他们自己搬走了。", "tags": ["trial"] },
+        { "id": "a33", "text": "没有。", "tags": ["trial"] },
+        { "id": "a34", "text": "我……我……不认得字。", "tags": ["trial"] },
+        { "id": "a35", "text": "过了二十年又是一个……", "tags": ["trial"] },
+        { "id": "a36", "text": "哈哈哈！", "tags": ["victory"] }
+    ]
+}

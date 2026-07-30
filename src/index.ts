@@ -127,5 +127,24 @@ export function apply(ctx: Context, config: ConfigType) {
                 new RolecardEngine(subCtx, rolecard, engineConfig);
             }
         }
+
+        // 阿Q角色卡
+        if (ch.ahQ) {
+            const rolecard = rolecardMap.get('ah-q');
+            if (!rolecard) {
+                logger.warn(`群聊 ${ch.channelId}：未找到角色卡 "ah-q"，跳过`);
+            } else {
+                const engineConfig = {
+                    ...config,
+                    __channelRoleConfig: ch.ahQConfig,
+                } as ConfigType & {
+                    __channelRoleConfig?: NonNullable<ChannelConfig['ahQConfig']>;
+                };
+
+                let subCtx = ctx.channel(ch.channelId);
+                if (ch.botId) subCtx = subCtx.self(ch.botId);
+                new RolecardEngine(subCtx, rolecard, engineConfig);
+            }
+        }
     }
 }

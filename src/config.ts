@@ -87,12 +87,24 @@ const kongYijiTagOptions = [
     { tag: 'laugh', name: '被嘲笑' },
 ];
 
+/** 阿Q的标签选项（与 trigger-words.json 中的 groups 对应）。 */
+const ahQTagOptions = [
+    { tag: 'victory', name: '精神胜利' },
+    { tag: 'curse', name: '骂人嘴硬' },
+    { tag: 'bully', name: '欺软怕硬' },
+    { tag: 'revolution', name: '造反革命' },
+    { tag: 'poor', name: '穷酸炫耀' },
+    { tag: 'trial', name: '糊涂受审' },
+];
+
 /** 别里科夫专属配置组 Schema。 */
 const belikovConfigSchema = makeRoleConfigSchema('别里科夫', belikovTagOptions);
 /** 格里高尔专属配置组 Schema。 */
 const gregorSamsaConfigSchema = makeRoleConfigSchema('格里高尔', gregorSamsaTagOptions);
 /** 孔乙己专属配置组 Schema。 */
 const kongYijiConfigSchema = makeRoleConfigSchema('孔乙己', kongYijiTagOptions);
+/** 阿Q专属配置组 Schema。 */
+const ahQConfigSchema = makeRoleConfigSchema('阿Q', ahQTagOptions);
 
 // ──────────────────────────────────────────────────────────────
 // 群聊配置项
@@ -113,6 +125,7 @@ const ChannelItem = Schema.intersect([
         belikov: Schema.boolean().default(false).description('启用别里科夫 · 套中人'),
         gregorSamsa: Schema.boolean().default(false).description('启用格里高尔 · 变形记'),
         kongYiji: Schema.boolean().default(false).description('启用孔乙己 · 孔乙己'),
+        ahQ: Schema.boolean().default(false).description('启用阿Q · 阿Q正传'),
     }),
     Schema.union([
         Schema.object({
@@ -132,6 +145,13 @@ const ChannelItem = Schema.intersect([
         Schema.object({
             kongYiji: Schema.const(true).required(),
             kongYijiConfig: kongYijiConfigSchema,
+        }),
+        Schema.object({}),
+    ]),
+    Schema.union([
+        Schema.object({
+            ahQ: Schema.const(true).required(),
+            ahQConfig: ahQConfigSchema,
         }),
         Schema.object({}),
     ]),

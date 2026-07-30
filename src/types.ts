@@ -138,6 +138,10 @@ export interface ChannelConfig {
     kongYiji: boolean;
     /** 孔乙己专属配置（仅当 kongYiji 为 true 时有效）。 */
     kongYijiConfig?: RoleChannelConfig;
+    /** 是否启用阿Q角色卡。 */
+    ahQ: boolean;
+    /** 阿Q专属配置（仅当 ahQ 为 true 时有效）。 */
+    ahQConfig?: RoleChannelConfig;
 }
 
 /** 插件运行时配置。所有行为参数统一由此处控制，与角色卡内容解耦。 */
