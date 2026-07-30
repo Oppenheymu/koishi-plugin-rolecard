@@ -1,12 +1,13 @@
 {
     "compilerOptions": {
         "strict": true,
+        "ignoreDeprecations": "6.0",
         "exactOptionalPropertyTypes": true,
         "noImplicitOverride": true,
         "useUnknownInCatchVariables": true,
         "target": "es2022",
         "module": "commonjs",
-        "moduleResolution": "bundler",
+        "moduleResolution": "node",
         "declaration": true,
         "composite": true,
         "incremental": true,
