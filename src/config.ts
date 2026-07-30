@@ -106,6 +106,16 @@ const hamletTagOptions = [
     { tag: 'action', name: '行动与决断' },
 ];
 
+/** 堂吉诃德的标签选项（与 trigger-words.json 中的 groups 对应）。 */
+const donQuixoteTagOptions = [
+    { tag: 'challenge', name: '挑战与冲锋' },
+    { tag: 'chivalry', name: '骑士信条' },
+    { tag: 'fantasy', name: '幻想妄想' },
+    { tag: 'failure', name: '失败嘴硬' },
+    { tag: 'freedom', name: '自由与理想' },
+    { tag: 'love', name: '骑士之爱' },
+];
+
 /** 别里科夫专属配置组 Schema。 */
 const belikovConfigSchema = makeRoleConfigSchema('别里科夫', belikovTagOptions);
 /** 格里高尔专属配置组 Schema。 */
@@ -116,6 +126,8 @@ const kongYijiConfigSchema = makeRoleConfigSchema('孔乙己', kongYijiTagOption
 const ahQConfigSchema = makeRoleConfigSchema('阿Q', ahQTagOptions);
 /** 哈姆雷特专属配置组 Schema。 */
 const hamletConfigSchema = makeRoleConfigSchema('哈姆雷特', hamletTagOptions);
+/** 堂吉诃德专属配置组 Schema。 */
+const donQuixoteConfigSchema = makeRoleConfigSchema('堂吉诃德', donQuixoteTagOptions);
 
 // ──────────────────────────────────────────────────────────────
 // 群聊配置项
@@ -138,6 +150,7 @@ const ChannelItem = Schema.intersect([
         kongYiji: Schema.boolean().default(false).description('启用孔乙己 · 孔乙己'),
         ahQ: Schema.boolean().default(false).description('启用阿Q · 阿Q正传'),
         hamlet: Schema.boolean().default(false).description('启用哈姆雷特 · 哈姆雷特'),
+        donQuixote: Schema.boolean().default(false).description('启用堂吉诃德 · 堂吉诃德'),
     }),
     Schema.union([
         Schema.object({
@@ -171,6 +184,13 @@ const ChannelItem = Schema.intersect([
         Schema.object({
             hamlet: Schema.const(true).required(),
             hamletConfig: hamletConfigSchema,
+        }),
+        Schema.object({}),
+    ]),
+    Schema.union([
+        Schema.object({
+            donQuixote: Schema.const(true).required(),
+            donQuixoteConfig: donQuixoteConfigSchema,
         }),
         Schema.object({}),
     ]),

@@ -146,6 +146,10 @@ export interface ChannelConfig {
     hamlet: boolean;
     /** 哈姆雷特专属配置（仅当 hamlet 为 true 时有效）。 */
     hamletConfig?: RoleChannelConfig;
+    /** 是否启用堂吉诃德角色卡。 */
+    donQuixote: boolean;
+    /** 堂吉诃德专属配置（仅当 donQuixote 为 true 时有效）。 */
+    donQuixoteConfig?: RoleChannelConfig;
 }
 
 /** 插件运行时配置。所有行为参数统一由此处控制，与角色卡内容解耦。 */

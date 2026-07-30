@@ -165,5 +165,24 @@ export function apply(ctx: Context, config: ConfigType) {
                 new RolecardEngine(subCtx, rolecard, engineConfig);
             }
         }
+
+        // 堂吉诃德角色卡
+        if (ch.donQuixote) {
+            const rolecard = rolecardMap.get('don-quixote');
+            if (!rolecard) {
+                logger.warn(`群聊 ${ch.channelId}：未找到角色卡 "don-quixote"，跳过`);
+            } else {
+                const engineConfig = {
+                    ...config,
+                    __channelRoleConfig: ch.donQuixoteConfig,
+                } as ConfigType & {
+                    __channelRoleConfig?: NonNullable<ChannelConfig['donQuixoteConfig']>;
+                };
+
+                let subCtx = ctx.channel(ch.channelId);
+                if (ch.botId) subCtx = subCtx.self(ch.botId);
+                new RolecardEngine(subCtx, rolecard, engineConfig);
+            }
+        }
     }
 }
