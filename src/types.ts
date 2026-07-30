@@ -134,6 +134,10 @@ export interface ChannelConfig {
     gregorSamsa: boolean;
     /** 格里高尔专属配置（仅当 gregorSamsa 为 true 时有效）。 */
     gregorSamsaConfig?: RoleChannelConfig;
+    /** 是否启用孔乙己角色卡。 */
+    kongYiji: boolean;
+    /** 孔乙己专属配置（仅当 kongYiji 为 true 时有效）。 */
+    kongYijiConfig?: RoleChannelConfig;
 }
 
 /** 插件运行时配置。所有行为参数统一由此处控制，与角色卡内容解耦。 */

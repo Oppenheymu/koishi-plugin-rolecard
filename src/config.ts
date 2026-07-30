@@ -77,10 +77,22 @@ const gregorSamsaTagOptions = [
     { tag: 'music', name: '音乐与美好' },
 ];
 
+/** 孔乙己的标签选项（与 trigger-words.json 中的 groups 对应）。 */
+const kongYijiTagOptions = [
+    { tag: 'steal', name: '偷窃与狡辩' },
+    { tag: 'defend', name: '清白辩护' },
+    { tag: 'showoff', name: '卖弄学问' },
+    { tag: 'debt', name: '欠债与穷困' },
+    { tag: 'drink', name: '喝酒' },
+    { tag: 'laugh', name: '被嘲笑' },
+];
+
 /** 别里科夫专属配置组 Schema。 */
 const belikovConfigSchema = makeRoleConfigSchema('别里科夫', belikovTagOptions);
 /** 格里高尔专属配置组 Schema。 */
 const gregorSamsaConfigSchema = makeRoleConfigSchema('格里高尔', gregorSamsaTagOptions);
+/** 孔乙己专属配置组 Schema。 */
+const kongYijiConfigSchema = makeRoleConfigSchema('孔乙己', kongYijiTagOptions);
 
 // ──────────────────────────────────────────────────────────────
 // 群聊配置项
@@ -100,6 +112,7 @@ const ChannelItem = Schema.intersect([
         botId: Schema.string().default('').description('启用的机器人 selfId（留空表示不限定）'),
         belikov: Schema.boolean().default(false).description('启用别里科夫 · 套中人'),
         gregorSamsa: Schema.boolean().default(false).description('启用格里高尔 · 变形记'),
+        kongYiji: Schema.boolean().default(false).description('启用孔乙己 · 孔乙己'),
     }),
     Schema.union([
         Schema.object({
@@ -112,6 +125,13 @@ const ChannelItem = Schema.intersect([
         Schema.object({
             gregorSamsa: Schema.const(true).required(),
             gregorSamsaConfig: gregorSamsaConfigSchema,
+        }),
+        Schema.object({}),
+    ]),
+    Schema.union([
+        Schema.object({
+            kongYiji: Schema.const(true).required(),
+            kongYijiConfig: kongYijiConfigSchema,
         }),
         Schema.object({}),
     ]),

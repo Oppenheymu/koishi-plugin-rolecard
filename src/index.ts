@@ -108,5 +108,24 @@ export function apply(ctx: Context, config: ConfigType) {
                 new RolecardEngine(subCtx, rolecard, engineConfig);
             }
         }
+
+        // 孔乙己角色卡
+        if (ch.kongYiji) {
+            const rolecard = rolecardMap.get('kong-yiji');
+            if (!rolecard) {
+                logger.warn(`群聊 ${ch.channelId}：未找到角色卡 "kong-yiji"，跳过`);
+            } else {
+                const engineConfig = {
+                    ...config,
+                    __channelRoleConfig: ch.kongYijiConfig,
+                } as ConfigType & {
+                    __channelRoleConfig?: NonNullable<ChannelConfig['kongYijiConfig']>;
+                };
+
+                let subCtx = ctx.channel(ch.channelId);
+                if (ch.botId) subCtx = subCtx.self(ch.botId);
+                new RolecardEngine(subCtx, rolecard, engineConfig);
+            }
+        }
     }
 }
