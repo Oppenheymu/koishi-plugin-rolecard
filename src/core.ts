@@ -34,6 +34,7 @@ export class RolecardEngine {
 
     constructor(
         ctx: Context,
+        // biome-ignore lint/correctness/noUnusedPrivateClassMembers: 预留的
         private readonly rolecard: Rolecard,
         private readonly config: Config
     ) {
